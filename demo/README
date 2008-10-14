@@ -1,0 +1,4 @@
+1. Checkout 'idst' -- 'make' at the top level and then 'make' examples/function/xo
+2. export IDST_DIR=/some/where/idst/function/examples
+3. make
+
