@@ -17,7 +17,7 @@ and how to drive it.
 
 Also: Last time I said that the Pepsi was undocumented but that
 turns out not to be true. Here's information!
-`http://pimuarta.com/software/cola/pepsi.html'"
+`http://piumarta.com/software/cola/pepsi.html'"
 
 "# CPU (recap)"
 
