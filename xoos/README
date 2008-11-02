@@ -1,0 +1,15 @@
+XOOS ("Zeus") -- an experimental operating system for the OLPC XO.
+
+To build you first need a recent idst. Compile that ('make' at
+top-level and in examples/xo directory) and then:
+  export IDST_DIR=..../idst
+  make
+
+Then you can boot the 'xoos1' file on your XO. There are many ways to
+do that, see http://www.vpri.org/fonc_wiki/index.php/XO_Hacking for suggestions.
+Or just copy it onto a USB stick and write 'boot u:\xoos1'.
+
+Important: Minimum firmware version is q2e21a (http://dev.laptop.org/~wmb/q2e21a.rom)
+           Mouse support will not work in older firmware.
+
+-- Luke Gorrie <lukego@gmail.com>
