@@ -6,15 +6,15 @@
 
 OFW : Object ()
 
-OFW call: word inputs: inputs nresults: nresults
+OFW call: word inputs: inputs
 [ "Invoke an Openfirmware service and return the array of results."
   | array |
-  array := self createCallRecord: word inputs: inputs nresults: nresults.
+  array := self createCallRecord: word inputs: inputs numResults: 20.
   self callOFW_: array _elements.
-  ^array copyFrom: (array size - nresults)
+  ^array from: (array size - 20) collect: [:v | Integer value_: v].
 ]
 
-OFW createCallRecord: word inputs: inputs nresults: nresults
+OFW createCallRecord: word inputs: inputs numResults: nresults
 [ "Answer an array appropriate for passing to Openfirmware."
   | items |
   items := OrderedCollection new
@@ -44,13 +44,13 @@ String          _value [ ^self _stringValue ]
 Integer         _value [ ^self _integerValue ]
 UndefinedObject _value [ ^0 _integerValue ]
 
-OFW call1: word inputs: inputs [ ^(OFW call: word inputs: inputs nresults: 1) at: 0 ]
+OFW call1: word inputs: inputs [ ^(OFW call: word inputs: inputs) first ]
 OFW call1: word input: input   [ ^OFW call1: word inputs: (Array with: input) ]
-OFW call1: word                [ ^OFW call1: word inputs: (Array new: 0) ]
+OFW call1: word                [ ^OFW call1: word inputs: #() ]
 
-OFW peer:   phandle  [ ^Integer value_: (OFW call1: 'peer' input: phandle) ]
-OFW child:  phandle  [ ^Integer value_: (OFW call1: 'child' input: phandle) ]
-OFW parent: phandle  [ ^Integer value_: (OFW call1: 'phandle' input: phandle) ]
+OFW peer:   phandle  [ ^OFW call1: 'peer' input: phandle ]
+OFW child:  phandle  [ ^OFW call1: 'child' input: phandle ]
+OFW parent: phandle  [ ^OFW call1: 'phandle' input: phandle ]
 
 OFW packageToPath: phandle
 [
@@ -60,13 +60,28 @@ OFW packageToPath: phandle
   ^str
 ]
 
-OFW milliseconds [ ^Integer value_: (OFW call1: 'milliseconds') ]
+OFW milliseconds [ ^OFW call1: 'milliseconds' ]
 
 OFW waitms: millis
 [
+  OFW interpret: 'ms' inputs: (Array with: millis).
+"
   | end |
   end := OFW milliseconds + millis.
   [ OFW milliseconds < end ] whileTrue.
+"
+]
+
+OFW interpret: string inputs: inputs
+[
+  ^OFW call: 'interpret' inputs: (Array with: string), inputs
+]
+
+OFW open: device    [ ^OFW call1: 'open' input: device ]
+OFW close: instance [ ^OFW call1: 'close' input: instance ]
+OFW callMethod: name device: instance inputs: inputs
+[
+  ^OFW call: 'call-method' inputs: (Array with: name with: instance) , inputs.
 ]
 
 "# DeviceNode"
@@ -100,9 +115,28 @@ DeviceNode do: aBlock
 Object          ifNotNilDo: aBlock [ aBlock value: self ]
 UndefinedObject ifNotNilDo: aBlock [ ^nil ]
 
-"# Test cases"
+"# Device"
 
-[ Test add: OFW. ]
+Device : Object ( handle )
+Device ihandle: ihandle
+[
+  (ihandle = 0) ifTrue: [^nil].
+  self := self new.
+  handle := ihandle.
+]
+
+Device open: name [ ^Device ihandle: (OFW open: name) ]
+
+Device call: method inputs: inputs
+[ ^OFW callMethod: method device: handle inputs: inputs ]
+
+Device call: method input: input
+[ ^OFW callMethod: method device: handle inputs: (Array with: input) ]
+
+Device call: method
+[ ^OFW callMethod: method device: handle inputs: #() ]
+
+"# Test cases"
 
 OFW selftest
 [
@@ -112,5 +146,4 @@ OFW selftest
   DeviceNode root do: [ :node | nodes := nodes + 1 ].
   ((nodes asString) , ' nodes.') putln.
 ]
-
 

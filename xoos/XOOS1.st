@@ -2,8 +2,12 @@
 
 { import: Extension }
 { import: Geode }
+{ import: Keyboard }
+{ import: Mouse }
 { import: OFW }
 { import: Test }
 
-[ 'BOOTING OS1' putln. Test run. 'BOOTED OS1' putln. ]
+FB := [ Framebuffer ] "Short name"
+
+[ Test run ]
 

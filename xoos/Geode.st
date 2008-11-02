@@ -51,46 +51,9 @@ Integer joinedWith: n [ ^(self halfword << 16) bitOr: n halfword ]
 Integer halfword      [ ^self bitAnd: 0xFFFF ]
 
 GP fill [ self blitWithRopMode: 0x800000F0 blitMode: 0 ]
-GP move [ self blitWithRopMode: 0x600000CC blitMode: 1 ]
+GP move [ self blitWithRopMode: 0x800000CC blitMode: 1 ]
 
 GP blitWithRopMode: rop blitMode: blit [ self waitReady; rasterOpMode: rop; blitMode: blit; waitDone ]
-
-"# Framebuffer"
-
-Framebuffer : Object ()
-
-Framebuffer address [ ^0xfd000000 ]
-Framebuffer bytes   [ ^16 * 1024 * 1024 ]
-Framebuffer lines   [ ^self bytes // DP bytesPerPixel // DP width ]
-
-Framebuffer backup
-[ "Copy the visible region of the framebuffer to the end of the framebuffer."
-  GP srcX: 0 srcY: 0;
-     dstX: 0 dstY: (Framebuffer lines - DP height);
-     width: DP width height: DP height;
-     move
-]
-
-Framebuffer restore
-[ "Copy the invisible region at the end of the framebuffer over the visible region."
-  GP srcX: 0 srcY: (Framebuffer lines - DP height);
-     dstX: 0 dstY: 0;
-     width: DP width height: DP height;
-     move
-]
-
-Framebuffer selftest
-[
-  'backup and restore screen memory:' putln.
-  Framebuffer backup.
-  'This text will disappear in 1 second.' putln.
-  OFW waitms: 1000.
-  Framebuffer restore.
-  StdOut cr.
-  OFW waitms: 1000.
-]
-
-[ Test add: Framebuffer ]
 
 "# DP"
 
@@ -118,32 +81,45 @@ DP bytesPerPixel [ ^self bpp / 8 ]
 DP dispMode    [ ^((CPU peek: 0xFE004008) bitAnd: 0x00000300) >> 8 ]
 DP dispMode: n [ CPU at: 0xFE004008 poke: n bits: 2 position: 8 ]
 
-[ Test add: DP ]
+"# Framebuffer"
 
-DP selftest2
+Framebuffer : Object ()
+
+Framebuffer address [ ^0xfd000000 ]
+Framebuffer bytes   [ ^16 * 1024 * 1024 ]
+Framebuffer lines   [ ^self bytes // DP bytesPerPixel // DP width ]
+
+Framebuffer x: x y: y set32: color
 [
-  Framebuffer backup.
-  [
-  DP bpp: 32.
-  self drawBlocks.
-  OFW waitms: 5000.
-  DP bpp: 16.
-  Framebuffer restore.
-  42
-  ]  whileTrue.
+  CPU at: self address + (x + (y * DP width) * 4) poke: color
 ]
 
-DP selftest
+Framebuffer backup
+[ "Copy the visible region of the framebuffer to the end of the framebuffer."
+  GP srcX: 0 srcY: 0;
+     dstX: 0 dstY: (Framebuffer lines - DP height);
+     width: DP width height: DP height;
+     move
+]
+
+Framebuffer restore
+[ "Copy the invisible region at the end of the framebuffer over the visible region."
+  GP srcX: 0 srcY: (Framebuffer lines - DP height);
+     dstX: 0 dstY: 0;
+     width: DP width height: DP height;
+     move
+]
+
+Framebuffer selftest
 [
   'DP bit depths:' putln.
   Framebuffer backup.
   OFW waitms: 1000.
-  #(8 16 24 32) do:
+"  #(8 16 24 32) do:"
+  #(32) do:
     [ :bpp |
-      DP bpp: 16.
-      Framebuffer restore.
       DP bpp: bpp.
-      OFW waitms: 1000.
+      Framebuffer clear.
       self drawBlocks.
       OFW waitms: 1000.
       DP bpp = bpp ifTrue: [ bpp print. '-ok ' put ] ifFalse: [ bpp print. '-error' put. ] ].
@@ -152,25 +128,25 @@ DP selftest
   'restored framebuffer' putln.
 ]
 
-DP drawBlocks [
+Framebuffer clear
+[
+  GP dstX: 0 dstY: 0; width: 1200 height: 900; pattern: 0; fill.
+]
+
+Framebuffer drawBlocks
+[
   | colors w h |
   w := DP width // 10.
   h := DP height // 10.
   colors := #( 0x000000 0xFF0000 0x00FF00 0x0000FF ).
   GP width: w height: h.
   0 to: 9 do: [ :y | 0 to: 9 do: [:x |
-    OFW waitms: 100.
+    OFW waitms: 10.
     GP pattern: (colors at: x + y \\ colors size);
        dstX: x*w dstY: y*h;
        fill.
   ]]
 ]
 
-"# Test"
+[ Test add: Framebuffer ]
 
-Geode : Object ()
-[ Test add: Geode ]
-
-Geode selftest
-[
-]
