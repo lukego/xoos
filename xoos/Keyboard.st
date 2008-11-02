@@ -18,8 +18,8 @@ KeyboardEvent state [^state]
 KeyboardEvent poll: keyboard
 [
   "We use these keyboard device methods:
-   get-scancode   ( time -- 0 | scancode -1 )
-   scancode->char ( scancode -- 0 | ascii -1 )"
+   get-scancode  ( time -- 0 | scancode -1 )
+   get-ascii     ( scancode -- 0 | ascii -1 )"
   | res |
   res := keyboard call: 'get-scancode' input: 0.
   res second == 0 ifTrue: [ ^nil ].
