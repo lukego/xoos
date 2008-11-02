@@ -7,7 +7,8 @@
 { import: OFW }
 { import: Test }
 
-FB := [ Framebuffer ] "Short name"
-
-[ Test run ]
+"You could put any Pepsi code that you like in here!"
+[
+  Test run
+]
 
