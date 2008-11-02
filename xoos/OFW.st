@@ -19,10 +19,10 @@ OFW createCallRecord: word inputs: inputs numResults: nresults
   | items |
   items := OrderedCollection new
             add:    word;
-	    add:    inputs size;
-	    add:    nresults;
-	    addAll: inputs;
-	    addAll: (Array new: nresults).
+            add:    inputs size;
+            add:    nresults;
+            addAll: inputs;
+            addAll: (Array new: nresults).
   ^(items collect: [ :e | e _value ]) asArray.
 ]
 
@@ -32,9 +32,9 @@ OFW callOFW_: _array
 {
     extern int call_firmware(void *);
     if (call_firmware(v__array) == 0)
-	return v_self;
+        return v_self;
     else
-	return 0;
+        return 0;
 }
 
 "For convenience I've used an `_value' message to convert objects into
