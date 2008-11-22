@@ -43,6 +43,7 @@ C types, without the caller bothering whether they're numbers or strings."
 String          _value [ ^self _stringValue ]
 Integer         _value [ ^self _integerValue ]
 UndefinedObject _value [ ^0 _integerValue ]
+ByteArray       _value [ ^self _bytes ]
 
 OFW call1: word inputs: inputs [ ^(OFW call: word inputs: inputs) first ]
 OFW call1: word input: input   [ ^OFW call1: word inputs: (Array with: input) ]
@@ -79,6 +80,23 @@ OFW interpret: string inputs: inputs
 
 OFW open: device    [ ^OFW call1: 'open' input: device ]
 OFW close: instance [ ^OFW call1: 'close' input: instance ]
+
+OFW read: device into: buffer
+[
+  | res |
+  res := (OFW call: 'read' inputs: (Array with: device with: buffer with: buffer size)) first.
+  res > 0
+    ifTrue:  [^buffer copyFrom: 0 to: res - 1]
+    ifFalse: [^res].
+]
+
+OFW write: device data: data [ ^OFW write: device data: data size: data size ]
+
+OFW write: device data: data size: size
+[
+  ^OFW call: 'write' inputs: (Array with: device with: data with: size)
+]
+
 OFW callMethod: name device: instance inputs: inputs
 [
   ^OFW call: 'call-method' inputs: (Array with: name with: instance) , inputs.
@@ -135,6 +153,8 @@ Device call: method input: input
 
 Device call: method
 [ ^OFW callMethod: method device: handle inputs: #() ]
+
+Device _value [ ^handle _value ]
 
 "# Test cases"
 

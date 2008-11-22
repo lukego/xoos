@@ -1,5 +1,5 @@
 MAIN     := XOOS1.st
-LIBS     := Extension Geode Keyboard Mouse OFW Test
+LIBS     := Extension Geode Keyboard Mouse OFW Wifi Test
 LIB_OBJS := $(LIBS:%=%.o)
 BOOTLIBS := libobjects.a libossage.a libofw.a
 BOOTFILES := ${BOOTLIBS:%=${IDST_DIR}/function/examples/xo/%}

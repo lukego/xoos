@@ -5,6 +5,7 @@
 { import: Keyboard }
 { import: Mouse }
 { import: OFW }
+{ import: Wifi }
 { import: Test }
 
 "You could put any Pepsi code that you like in here!"

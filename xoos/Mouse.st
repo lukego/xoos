@@ -9,6 +9,7 @@ Mouse init
 [
   mouse := Device open: '/mouse'.
   mouse call: 'stream-mode'
+  OFW interpret: 'dev /mouse  : mymethod ... ;'.
 ]
 
 Mouse poll
