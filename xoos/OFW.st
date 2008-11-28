@@ -63,6 +63,8 @@ OFW packageToPath: phandle
 
 OFW milliseconds [ ^OFW call1: 'milliseconds' ]
 
+OFW variable: var [ ^(OFW interpret: var inputs: #()) first ]
+
 OFW waitms: millis
 [
   OFW interpret: 'ms' inputs: (Array with: millis).
