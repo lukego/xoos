@@ -42,7 +42,6 @@ FilePatch selftest
   | file |
   'opening file' putln.
   file := File open: 'u:\\boot\\olpc.fth'.
-"  'fd = ' put. file fd println. file println."
   'contents:' putln.
   (FileStream on: file) contents println.
 ]
@@ -51,9 +50,7 @@ FilePatch selftest
   | stdin stdout |
   stdin  := Device ihandle: (OFW variable: 'stdin').
   stdout := Device ihandle: (OFW variable: 'stdout').
-  'x' putln.
-  StdIn := File withPrimFile: stdin name: '<stdin>'. "FIXME: SharedFile"
-  'y' putln.
+  StdIn := SharedFile withPrimFile: stdin name: '<stdin>'.
   StdOut := File withPrimFile: stdout name: '<stdout>'.
   StdErr := File withPrimFile: stdout name: '<stderr>'.
 ]
