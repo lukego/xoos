@@ -1,3 +1,6 @@
+"Copyright 2008 Luke Gorrie <luke@member.fsf.org>
+ See the included file LICENSE for license terms. (BSD.)"
+
 { import: Objects }
 { import: OFW }
 
@@ -8,8 +11,7 @@ Mouse : Object ( mouse )
 Mouse init
 [
   mouse := Device open: '/mouse'.
-  mouse call: 'stream-mode'
-  OFW interpret: 'dev /mouse  : mymethod ... ;'.
+  mouse call: 'stream-mode'.
 ]
 
 Mouse poll
