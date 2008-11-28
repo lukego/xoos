@@ -34,8 +34,6 @@ Wifi arp
 Wifi selftest
 [
    | x |
-   'setting essid' putln.
-   Wifi essid: 'luke2'.
    'testing wifi.' putln.
    Wifi init.
    'writing wifi: ' putln.
