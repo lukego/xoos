@@ -1,6 +1,7 @@
 { import: Object }
 
 { import: Extension }
+{ import: FilePatch }
 { import: Geode }
 { import: Keyboard }
 { import: Mouse }
