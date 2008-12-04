@@ -16,7 +16,7 @@ Wifi init
 
 Wifi essid: essid [ ^OFW interpret: 'essid ' , essid inputs: #() ]
 Wifi associate    [ ^OFW callMethod: 'do-associate' device: wifi inputs: #() ]
-Wifi read         [ ^OFW read: wifi into: buffer ]
+Wifi read         [ ^OFW read: wifi on: buffer ]
 Wifi write: frame [ ^OFW write: wifi data: frame ]
 
 Wifi blockingRead

@@ -83,10 +83,17 @@ OFW interpret: string inputs: inputs
 OFW open: device    [ ^OFW call1: 'open' input: device ]
 OFW close: instance [ ^OFW call1: 'close' input: instance ]
 
-OFW read: device into: buffer
+OFW read: device into: buffer offset: offset size: size
+[
+  | ptr |
+  ptr := (Integer value_: buffer _value) + offset.
+  ^(OFW call: 'read' inputs: (Array with: device with: ptr with: size)) first.
+]
+
+OFW read: device on: buffer
 [
   | res |
-  res := (OFW call: 'read' inputs: (Array with: device with: buffer with: buffer size)) first.
+  res := OFW read: device into: buffer offset: 0 size: buffer size.
   res > 0
     ifTrue:  [^buffer copyFrom: 0 to: res - 1]
     ifFalse: [^res].

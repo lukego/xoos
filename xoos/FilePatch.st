@@ -24,9 +24,7 @@ OFWFile next: size putAll: aString
 
 OFWFile read: aCollection at: offset size: size
 [
-  "FIXME: size, offset"
-  offset > 0 ifTrue: [ self error: 'FIXME offset not supported' ].
-  OFW read: id into: aCollection
+  ^OFW read: id into: aCollection offset: offset size: size
 ]
 
 OFWFile write: device data: data size: size
@@ -34,7 +32,7 @@ OFWFile write: device data: data size: size
   self next: size putAll: data
 ]
 
-[ FileSystem := OFWFile ]
+[ File primFile: OFWFile ]
 
 FilePatch : Object ()
 FilePatch selftest
